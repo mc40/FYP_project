@@ -1,26 +1,28 @@
+import os
+from dotenv import load_dotenv
 import threading
 import time
-#  connect Database
-import pyMySQL
+import psycopg2
 
-# Update connection string information
-host = "localhost"
-user = "root"
-password = "12345678"
-database = "db"
-sslmode = "allow"
+#  connect Database
+load_dotenv()
+# update connection string information
+host = os.getenv('HOST')
+dbname = os.getenv('DBNAME')
+user = os.getenv('USER')
+password = os.getenv('PASSWORD')
+sslmode = os.getenv('SSLMODE')
 
 conn_string = "host={0} user={1} dbname={2} password={3}".format(host, user, dbname, password)
 conn = psycopg2.connect(conn_string)
 
-# conn = psycopg2.connect("dbname=test user=postgres")
 cur = conn.cursor()
-cur.execute("select * from information_schema.tables where table_name=%s", ('inventory',))
+cur.execute("select * from information_schema.tables where table_name=%s", ('movie',))
 if not bool(cur.rowcount):
-  cur.execute("CREATE TABLE inventory (id serial PRIMARY KEY, name VARCHAR(50), quantity INTEGER);")
+  cur.execute("CREATE TABLE movie (id serial PRIMARY KEY, header VARCHAR(100), link VARCHAR(100), runtime VARCHAR(50), type VARCHAR(100));")
   print("Finished creating table")
 # Insert some data into the table
-cur.execute("INSERT INTO inventory (name, quantity) VALUES (%s, %s);", ("banana", 150))
+# cur.execute("INSERT INTO movie (header, link, runtime, type) VALUES (%s, %s, %s, %s);", ("banana", 150))
 
 
 # 子執行緒的工作函數
