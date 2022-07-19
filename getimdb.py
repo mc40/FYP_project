@@ -40,44 +40,43 @@ def getlink(s, date):
             mvtype = 'Null'
 
         mvlist.append({'header': header, 'link': link, 'runtime': runtime, 'type': mvtype})
-    print(mvlist)
 
-# Get movie data in detail page and merge data
-    mvlist_overall = []
-    for mv in mvlist:
-        mvinfo = {}
-        mvdetail = s.post('https://www.imdb.com' + mv['link'])
-        res = mvdetail.text
-        mvsoup = BeautifulSoup(res, "html.parser")
-        actorlist = mvsoup.select('a.sc-36c36dd0-1')
-        characterlist = mvsoup.select('span.sc-36c36dd0-4')
-        information = mvsoup.select('div.sc-388740f9-0')
-        actors = []
-        characters = []
-        for name in actorlist:
-            actor = name.getText()
-            actors.append(actor)
-        for name2 in characterlist:
-            character = name2.getText()
-            characters.append(character)
-        mvinfo['title'] = mv['header']
-        mvinfo['id'] = mv['link']
-        mvinfo['poster'] = mvsoup.select_one('div.ipc-media img').get('src')
-        mvinfo['trailer'] = 'https://www.imdb.com' + mvsoup.select_one('div.ipc-slate a').get('href')
-        if not mvinfo['trailer'].__contains__('https://www.imdb.com/video'):
-            mvinfo['trailer'] = 'Null'
-        mvinfo['runtime'] = mv['runtime']
-        mvinfo['actors'] = actors
-        mvinfo['characters'] = characters
-        mvinfo['storyline'] = mvsoup.select_one('span.sc-16ede01-2').getText()
-        #mvinfo['storyline2'] = information.select_one('div.ipc-html-content-inner-div').getText()
-        mvinfo['releaseDate'] = str(date)
-        # ...
+# # Get movie data in detail page and merge data
+#     mvlist_overall = []
+#     for mv in mvlist:
+#         mvinfo = {}
+#         mvdetail = s.post('https://www.imdb.com' + mv['link'])
+#         res = mvdetail.text
+#         mvsoup = BeautifulSoup(res, "html.parser")
+#         actorlist = mvsoup.select('a.sc-36c36dd0-1')
+#         characterlist = mvsoup.select('span.sc-36c36dd0-4')
+#         information = mvsoup.select('div.sc-388740f9-0')
+#         actors = []
+#         characters = []
+#         for name in actorlist:
+#             actor = name.getText()
+#             actors.append(actor)
+#         for name2 in characterlist:
+#             character = name2.getText()
+#             characters.append(character)
+#         mvinfo['title'] = mv['header']
+#         mvinfo['id'] = mv['link']
+#         mvinfo['poster'] = mvsoup.select_one('div.ipc-media img').get('src')
+#         mvinfo['trailer'] = 'https://www.imdb.com' + mvsoup.select_one('div.ipc-slate a').get('href')
+#         if not mvinfo['trailer'].__contains__('https://www.imdb.com/video'):
+#             mvinfo['trailer'] = 'Null'
+#         mvinfo['runtime'] = mv['runtime']
+#         mvinfo['actors'] = actors
+#         mvinfo['characters'] = characters
+#         mvinfo['storyline'] = mvsoup.select_one('span.sc-16ede01-2').getText()
+#         #mvinfo['storyline2'] = information.select_one('div.ipc-html-content-inner-div').getText()
+#         mvinfo['releaseDate'] = str(date)
+#         # ...
 
-        #print(mvinfo['characters'])
-        print(mvinfo)
-        mvlist_overall.append(mvinfo)
-    print(mvlist_overall)
+#         #print(mvinfo['characters'])
+#         print(mvinfo)
+#         mvlist_overall.append(mvinfo)
+#     print(mvlist_overall)
 
 # Output to json
 
