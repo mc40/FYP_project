@@ -1,16 +1,16 @@
 import os
 from dotenv import load_dotenv
-import db
+from db import db
 import requests
 import datetime
 from bs4 import BeautifulSoup
 import threading
 import time
 start = time.time()
-# # create db
-# load_dotenv()
-# conn = db.db(os.getenv('HOST'), os.getenv('UUID'), os.getenv('DBNAME'), os.getenv('PASSWORD'))
 
+print(os.getenv('HOST'))
+# get db
+cur = db(os.getenv('HOST'), os.getenv('USER'), os.getenv('DBNAME'), os.getenv('PASSWORD'))
 # http request session
 s = requests.Session()
 

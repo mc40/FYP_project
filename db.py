@@ -10,4 +10,4 @@ def db(host, uuid, dbname, password):
         cur.execute("CREATE TABLE movie (id serial PRIMARY KEY, header VARCHAR(100), link VARCHAR(100), runtime VARCHAR(50), type VARCHAR(100));")
     print("Finished creating table")
 
-    return conn
+    return cur
