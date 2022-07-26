@@ -1,28 +1,28 @@
 import os
 from dotenv import load_dotenv
-from db import db
+from db import DB
 import requests
 import datetime
 from bs4 import BeautifulSoup
 import threading
 import time
 start = time.time()
-
-print(os.getenv('HOST'))
+load_dotenv()
 # get db
-cur = db(os.getenv('HOST'), os.getenv('USER'), os.getenv('DBNAME'), os.getenv('PASSWORD'))
+imdb = DB(os.getenv('HOST'), os.getenv('UUID'), os.getenv('DBNAME'), os.getenv('PASSWORD'))
 # http request session
 s = requests.Session()
 
 # due day
-start_date = datetime.date(2022, 6, 1)
-end_date = datetime.date(2022, 6,2)
+start_date = datetime.date(2016, 1, 1)
+# end_date = datetime.date(2016, 1, 1)
+end_date = datetime.date(2022, 7, 25)
 delta = datetime.timedelta(days=1)
 
 
 
 def getlink(s, date):
-    print('getlink' + str(date))
+    # print('scarping: ' + str(date))
     data = {
         'title_type': 'feature',
         'release_date': date,
@@ -57,8 +57,8 @@ def getlink(s, date):
         
     return mvlist
 
-def scrapToDatabase(movie):
-    print(scrapToDatabase)
+# def scrapToDatabase(movie):
+#     print(scrapToDatabase)
 
 # movie list
 movieList = []
@@ -68,10 +68,11 @@ def getLinkJob(s, date):
     global movieList
     print('Getting ' + str(date) + ' IMDB movie data')
     movieList.extend(getlink(s, date))
-    print('done ')
+    print(str(date) + ' done!')
 
 # Get movie data in detail page and merge data
 def getDetailJob(s, mv):
+    global imdb
     mvinfo = {}
     mvdetail = s.post('https://www.imdb.com' + mv['link'])
     res = mvdetail.text
@@ -102,7 +103,9 @@ def getDetailJob(s, mv):
     # ...
 
     #print(mvinfo['characters'])
-    print(mvinfo)
+    imdb.cur.execute("INSERT INTO movie (title, link, runtime, type, imdb_id, poster, trailer, actors, characters, storyline) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", 
+    (mvinfo['title'], mv['link'], mv['runtime'], mv['type'], mvinfo['id'], mvinfo['poster'], mvinfo['trailer'], mvinfo['actors'], mvinfo['characters'], mvinfo['storyline']))
+    # print(mvinfo.keys())
 
 threads = []
 while start_date <= end_date:
@@ -116,8 +119,8 @@ for t in threads:
   t.join()
 
 detailThreads = []
-for i in movieList:
-    detailThreads.append(threading.Thread(target = getDetailJob, args = (s, i)))
+for movie in movieList:
+    detailThreads.append(threading.Thread(target = getDetailJob, args = (s, movie)))
     detailThreads[-1].start()
     time.sleep(1)
 
@@ -125,7 +128,10 @@ for i in movieList:
 for t in detailThreads:
   t.join()
 
-print(len(threads), " days")
-print(len(detailThreads), " movies")
+
+imdb.close()
+
+# print(len(threads), " days")
+# print(len(detailThreads), " movies")
 end = time.time()
 print('time count ', end - start)
