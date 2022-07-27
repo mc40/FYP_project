@@ -5,13 +5,28 @@ import React from 'react';
 
 import { Layout, Col, Row } from 'antd';
 import { Input, Space } from 'antd';
+import http from './http-common';
+
 const { Search } = Input;
 
 const { Header, Footer, Sider, Content } = Layout;
 const onSearch = (value) => {
-  const response = await axios.get('/api/users');
-        console.log('response  ', response)
-        return response.data;
+  // http.get('centres')
+  //     .then(({status, data, message})=> {
+  //       if (status === 200) {
+  //         console.log(data)
+  //         setCentres(data)
+  //       } else {
+  //         setError(message)
+  //       }
+  //     })
+  //     .catch((error) => {
+  //         console.log(error);
+  //         setError(error)
+  //       })
+  //       .then(()=> {
+  //         setloading(false)
+  //       })
   console.log(value);
 }
 const axios = require('axios');
