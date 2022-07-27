@@ -83,9 +83,9 @@ def getDetailJob(s, mv):
     actors = ''
     characters = ''
     for name in actorlist:
-        actors+=name.getText()
+        actors+=(name.getText() + ', ')
     for name2 in characterlist:
-        characters+=name2.getText()
+        characters+=(name2.getText() + ', ')
     mvinfo['title'] = mv['header']
     mvinfo['id'] = mv['link']
     mvinfo['poster'] = mvsoup.select_one('div.ipc-media img').get('src')
