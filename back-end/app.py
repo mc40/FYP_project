@@ -23,7 +23,7 @@ def GetMovies():
     conn.close()
     print('GetMovies')
     return {
-        'data': movies
+        'result': movies
     }
 
 @app.route('/movie/<sentence>', methods=['GET'])
@@ -48,9 +48,22 @@ def querBySentence(sentence):
     # db
     conn = get_db_connection()
     cur = conn.cursor()
-    cur.execute('SELECT * FROM movies;')
-    books = cur.fetchall()
+    if len(persons) > 0 and len(dates) > 0:
+        cur.execute("SELECT * FROM movies where actors like '%{}%' AND releasedate like '%{}%'".format(persons[0], dates[0]))
+        movies = cur.fetchall()
+    elif len(persons) > 0:
+        cur.execute("SELECT * FROM movies where actors like '%{}%'".format(persons[0]))
+        movies = cur.fetchall()
+    elif len(dates) > 0:
+        cur.execute("SELECT * FROM movies where releasedate like '%{}%'".format(dates[0]))
+        movies = cur.fetchall()
+    else: 
+        movies = []
     cur.close()
     conn.close()
 
-    return 'String => {}'.format(sentence)
+    return {
+        "person": persons,
+        "date": dates,
+        "result": movies
+    }
