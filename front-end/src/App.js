@@ -14,9 +14,11 @@ function App() {
 
   useEffect(() => {
     http.get('movies')
-    .then((res) => {
-      // console.log(res.data.data)
-      setMovieList(res.data.data)
+    .then(({data}) => {
+      // console.log(data.result)
+      setMovieList(data.result)
+      setPersonList([])
+      setDateList([])
     }).catch((error) => {
       setLoading(false)
     }).then(()=> {
@@ -25,10 +27,15 @@ function App() {
   },[]);
   const [ loading, setLoading ] = useState(true);
   const [ movieList, setMovieList ] = useState([]);
+  const [ personList, setPersonList ] = useState([]);
+  const [ dateList, setDateList ] = useState([]);
   const onSearch = (value) => {
-    http.get('brdddddd')
-    .then((res) => {
-      movieList(res.data.data)
+    console.log(value)
+    http.get('movie/'+ value)
+    .then(({data}) => {
+      setMovieList(data.result)
+      setPersonList(data.person)
+      setDateList(data.date)
     }).catch((error) => {
       setLoading(false)
     }).then(()=> {
@@ -72,6 +79,9 @@ function App() {
             <br/>
             <br/>
             <br/>
+            {!loading && personList.length !== 0 && <span>Keywords(Actor): {personList}</span>}
+            {!loading && dateList.length !== 0 && <span>Keywords(Date): {dateList}</span>}
+            {!loading && movieList.length == 0 && <span>Sorry Related Movies not found.</span>}
             {!loading && <MovieCards movies={movieList}/>}
           </Col>
         </Row>
