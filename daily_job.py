@@ -15,8 +15,8 @@ s = requests.Session()
 
 # due day
 start_date = datetime.date(2016, 1, 1)
-# end_date = datetime.date(2016, 1, 1)
-end_date = datetime.date(2022, 7, 25)
+end_date = datetime.date(2016, 1, 2)
+# end_date = datetime.date(2022, 1, 25)
 delta = datetime.timedelta(days=1)
 
 
@@ -80,14 +80,12 @@ def getDetailJob(s, mv):
     actorlist = mvsoup.select('a.sc-36c36dd0-1')
     characterlist = mvsoup.select('span.sc-36c36dd0-4')
     information = mvsoup.select('div.sc-388740f9-0')
-    actors = []
-    characters = []
+    actors = ''
+    characters = ''
     for name in actorlist:
-        actor = name.getText()
-        actors.append(actor)
+        actors+=name.getText()
     for name2 in characterlist:
-        character = name2.getText()
-        characters.append(character)
+        characters+=name2.getText()
     mvinfo['title'] = mv['header']
     mvinfo['id'] = mv['link']
     mvinfo['poster'] = mvsoup.select_one('div.ipc-media img').get('src')
@@ -103,7 +101,7 @@ def getDetailJob(s, mv):
     # ...
 
     #print(mvinfo['characters'])
-    imdb.cur.execute("INSERT INTO movie (title, link, runtime, type, imdb_id, poster, trailer, actors, characters, storyline) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", 
+    imdb.cur.execute("INSERT INTO movies (title, link, runtime, type, imdb_id, poster, trailer, actors, characters, storyline) VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", 
     (mvinfo['title'], mv['link'], mv['runtime'], mv['type'], mvinfo['id'], mvinfo['poster'], mvinfo['trailer'], mvinfo['actors'], mvinfo['characters'], mvinfo['storyline']))
     # print(mvinfo.keys())
 

@@ -1,21 +1,41 @@
 import logo from './logo.svg';
 import './App.css';
 import "antd/dist/antd.css";
-import React from 'react';
-
+import React, { useState, useEffect } from 'react';
+import http from './http-common';
 import { Layout, Col, Row } from 'antd';
 import { Input, Space } from 'antd';
+import MovieCards from './components/MovieCards'
 const { Search } = Input;
 
 const { Header, Footer, Sider, Content } = Layout;
-const onSearch = (value) => {
-  const response = await axios.get('/api/users');
-        console.log('response  ', response)
-        return response.data;
-  console.log(value);
-}
-const axios = require('axios');
+
 function App() {
+
+  useEffect(() => {
+    http.get('movies')
+    .then((res) => {
+      // console.log(res.data.data)
+      setMovieList(res.data.data)
+    }).catch((error) => {
+      setLoading(false)
+    }).then(()=> {
+      setLoading(false)
+    })
+  },[]);
+  const [ loading, setLoading ] = useState(true);
+  const [ movieList, setMovieList ] = useState([]);
+  const onSearch = (value) => {
+    http.get('brdddddd')
+    .then((res) => {
+      movieList(res.data.data)
+    }).catch((error) => {
+      setLoading(false)
+    }).then(()=> {
+      setLoading(false)
+    })
+    console.log(value);
+  }
   return (
     <div>
     <Layout>
@@ -36,7 +56,7 @@ function App() {
       }}>
         <>
         <Row>
-          <Col span={12} offset={6}>
+          <Col span={18} offset={3}>
             <br/>
             <br/>
             <br/>
@@ -52,6 +72,7 @@ function App() {
             <br/>
             <br/>
             <br/>
+            {!loading && <MovieCards movies={movieList}/>}
           </Col>
         </Row>
         </>

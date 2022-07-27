@@ -8,10 +8,10 @@ class DB:
         self.conn = psycopg2.connect(conn_string)
         self.conn.autocommit = True
         self.cur = self.conn.cursor()
-        self.cur.execute("select * from information_schema.tables where table_name=%s", ('movie',))
+        self.cur.execute("select * from information_schema.tables where table_name=%s", ('movies',))
         if not bool(self.cur.rowcount):
             print("create table")
-            self.cur.execute("CREATE TABLE movie (id serial PRIMARY KEY, title VARCHAR(500), link VARCHAR(500), runtime VARCHAR(500), type VARCHAR(500), imdb_id VARCHAR(500), poster VARCHAR(500), trailer VARCHAR(500), actors VARCHAR(500), characters VARCHAR(500), storyline VARCHAR(500));")
+            self.cur.execute("CREATE TABLE movies (id serial PRIMARY KEY, title VARCHAR(500), link VARCHAR(500), runtime VARCHAR(500), type VARCHAR(500), imdb_id VARCHAR(500), poster VARCHAR(500), trailer VARCHAR(500), actors VARCHAR(500), characters VARCHAR(500), storyline VARCHAR(500));")
         print("Finished creating table")
 
             
