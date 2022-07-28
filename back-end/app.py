@@ -3,6 +3,8 @@ from flask_sqlalchemy import SQLAlchemy
 import os
 import psycopg2
 import spacy
+from spacy.lang.en.stop_words import STOP_WORDS
+
 app = Flask(__name__)
 
 def get_db_connection():
@@ -17,7 +19,7 @@ def GetMovies():
     # db
     conn = get_db_connection()
     cur = conn.cursor()
-    cur.execute('SELECT * FROM movies;')
+    cur.execute('SELECT * FROM movies LIMIT 30;')
     movies = cur.fetchall()
     cur.close()
     conn.close()
@@ -31,10 +33,10 @@ def querBySentence(sentence):
     # print("type(sentence) : ", type(sentence))
     persons = []
     dates = []
+    tokens = []
     nlp = spacy.load("en_core_web_sm")
     doc = nlp(sentence)
-    for token in doc:
-        print(token.text)
+    
     for ent in doc.ents:
         if ent.label_ == "PERSON":
             persons.append(ent.text)
@@ -44,6 +46,11 @@ def querBySentence(sentence):
         print('persons', persons)
         print('dates', dates)
 
+    stop_words = spacy.lang.en.stop_words.STOP_WORDS
+    doc = [word for word in doc if word not in stop_words and word and len(word) > 2]
+    for token in doc:
+        tokens.append(token.text)
+    print(tokens)
 
     # db
     conn = get_db_connection()
@@ -57,6 +64,9 @@ def querBySentence(sentence):
     elif len(dates) > 0:
         cur.execute("SELECT * FROM movies where releasedate like '%{}%'".format(dates[0]))
         movies = cur.fetchall()
+    elif 'stormbreaker' in tokens:
+        cur.execute('SELECT * FROM movies where id = 999 LIMIT 30;')
+        movies = cur.fetchall()
     else: 
         movies = []
     cur.close()
@@ -65,5 +75,6 @@ def querBySentence(sentence):
     return {
         "person": persons,
         "date": dates,
+        "token": tokens,
         "result": movies
     }

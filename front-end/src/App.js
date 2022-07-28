@@ -6,6 +6,8 @@ import http from './http-common';
 import { Layout, Col, Row } from 'antd';
 import { Input, Space } from 'antd';
 import MovieCards from './components/MovieCards'
+import { Tag } from 'antd';
+
 const { Search } = Input;
 
 const { Header, Footer, Sider, Content } = Layout;
@@ -19,6 +21,7 @@ function App() {
       setMovieList(data.result)
       setPersonList([])
       setDateList([])
+      setTokenList([])
     }).catch((error) => {
       setLoading(false)
     }).then(()=> {
@@ -29,10 +32,12 @@ function App() {
   const [ movieList, setMovieList ] = useState([]);
   const [ personList, setPersonList ] = useState([]);
   const [ dateList, setDateList ] = useState([]);
+  const [ tokenList, setTokenList ] = useState([]);
   const onSearch = (value) => {
     console.log(value)
     http.get('movie/'+ value)
     .then(({data}) => {
+      setTokenList(data.token)
       setMovieList(data.result)
       setPersonList(data.person)
       setDateList(data.date)
@@ -79,9 +84,11 @@ function App() {
             <br/>
             <br/>
             <br/>
-            {!loading && personList.length !== 0 && <span>Keywords(Actor): {personList}</span>}
-            {!loading && dateList.length !== 0 && <span>Keywords(Date): {dateList}</span>}
-            {!loading && movieList.length == 0 && <span>Sorry Related Movies not found.</span>}
+
+            {!loading && tokenList.length !== 0 && <span>Tokens: {tokenList.map((token, index) => <Tag>{token}</Tag>)}</span>}<br/>
+            {!loading && personList.length !== 0 && <span>Keywords(Actor): {personList.map((person, index) => <Tag>{person}</Tag>)}</span>}<br/>
+            {!loading && dateList.length !== 0 && <span>Keywords(Date): {dateList.map((date, index) => <Tag>{date}</Tag>)}</span>}<br/>
+            {!loading && movieList.length == 0 && <span>Sorry Related Movies not found.</span>}<br/>
             {!loading && <MovieCards movies={movieList}/>}
           </Col>
         </Row>
